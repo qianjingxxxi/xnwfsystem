@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["setting"],{"36b1":function(n,e,t){"use strict";t.r(e);var l=function(){var n=this,e=n.$createElement,t=n._self._c||e;return t("div",[n._v("修改密码")])},s=[],u={},c=u,i=t("2877"),r=Object(i["a"])(c,l,s,!1,null,null,null);e["default"]=r.exports}}]);
+//# sourceMappingURL=setting.a91c51e9.js.map
