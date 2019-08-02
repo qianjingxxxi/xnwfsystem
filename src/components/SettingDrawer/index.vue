@@ -45,11 +45,12 @@ export default {
   width: 48px;
   height: 48px;
   // background: @primary-color;
-  background: blue;
+  background: #1890ff;
   color: #fff;
   font-size: 20px;
   text-align: center;
   line-height: 48px;
   border-radius: 3px 0 0 3px;
+  cursor: pointer;
 }
 </style>

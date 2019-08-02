@@ -1,9 +1,15 @@
+/* eslint-disable no-undef */
 /* eslint-disable prettier/prettier */
 import Vue from "vue";
 import Router from "vue-router";
-import NoFound from "./views/404.vue";
+import NoFound from "./views/ErrorPage/404.vue";
+import ForBidden from "./views/ErrorPage/403.vue";
+import NoNotwork from "./views/ErrorPage/500.vue";
+import findLast from "lodash/findLast"
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
+import { check, isLogin } from "./utils/auth";
+import { notification } from "ant-design-vue";
 Vue.use(Router);
 
 const router = new Router({
@@ -11,19 +17,9 @@ const router = new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: "*",
-      name: "404",
-      hideInMenu: true,
-      component: NoFound
-    },
-    {
       path: "/user",
       hideInMenu: true,
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      // component: () =>
-      //   import(/* webpackChunkName: "layout" */ "./views/Layouts/BasicLayout"),
+      component: { render: h => h("router-view") },
       children: [{
         path: "/user",
         redirect: "/user/login",
@@ -37,11 +33,16 @@ const router = new Router({
     },
     {
       path: "/",
-      // meta: { authority: ["user", "admin"] },
+      meta: { authority: ["user", "admin"] },
       component: () =>
-        import(/* webpackChunkName: "layout" */ "@/components/Layouts/BasicLayout"),
+        import(/* webpackChunkName: "layout" */ "./Layouts/BasicLayout"),
       children: [
-       {
+        {
+          path: "/",
+          redirect: "/management/visitLog",
+          hideChildrenInMenu: true
+        },
+        {
           path: "/management",
           name: "management",
           meta: { icon: "pie-chart", title: "运营中心" },
@@ -133,6 +134,7 @@ const router = new Router({
             }, {
               path: "/password",
               name: "password",
+              // meta: { title: "修改密码", authority: ["admin"] },
               meta: { title: "修改密码" },
               component: () =>
                 import(/* webpackChunkName: "setting" */ "./views/Setting/Password")
@@ -140,6 +142,23 @@ const router = new Router({
         }
       ]
     },
+    {
+      path: "/403",
+      name: "403",
+      hideInMenu: true,
+      component: ForBidden
+    },
+    {
+      path: "*",
+      name: "404",
+      hideInMenu: true,
+      component: NoFound
+    }, {
+      path: "/500",
+      name: "500",
+      hideInMenu: true,
+      component: NoNotwork
+    }
 
   ]
 });
@@ -147,9 +166,26 @@ router.beforeEach((to, from, next) => {
   if (to.path !== from.path) {
     NProgress.start();
   }
-  next();
+  const record = findLast(to.matched, record => record.meta.authority);
+  if (record && !check(record.meta.authority)) {
+    if (!isLogin() && to.path !== "/user/login") {
+      next({
+        path: "/user/login"
+      });
+    } else if (to.path !== "/403") {
+      notification.error({
+        message: "403",
+        description: "你没有权限访问，请联系管理员咨询。"
+      });
+      next({
+        path: "/403"
+      });
+    }
+    NProgress.done();
+  }
 
-})
+  next();
+});
 
 router.afterEach(() => {
   NProgress.done()

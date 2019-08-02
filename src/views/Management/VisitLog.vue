@@ -1,5 +1,5 @@
 <template>
-    <div>拜访记录</div>
+    <div>拜访记录{{$store.state.loginInfo}}</div>
 </template>
 
 <script>

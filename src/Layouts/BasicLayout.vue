@@ -10,6 +10,7 @@
       <a-layout>
         <a-layout-header style="background: #fff; padding: 0">
           <a-icon
+            v-auth="['user']"
             class="trigger"
             :type="collapsed ? 'menu-unfold' : 'menu-fold' "
             @click="collapsed=!collapsed"
@@ -26,13 +27,14 @@
           </div>
         </a-layout-content>
 
-        <a-layout-footer>
+        <a-layout-footer style="text-align:center">
           <Footer />
         </a-layout-footer>
       </a-layout>
     </a-layout>
-
-    <SettingDrawer />
+    <Authorized :authority="['user']">
+      <SettingDrawer />
+    </Authorized>
   </div>
 </template>
 
@@ -40,14 +42,14 @@
 import Header from "./Header";
 import SiderMenu from "./SiderMenu";
 import Footer from "./Footer";
-import SettingDrawer from "../../components/SettingDrawer/index";
+import SettingDrawer from "@/components/SettingDrawer/index";
 // import logo from "@/assets/logo.png";
 export default {
   data() {
     return {
       collapsed: false,
-      logoOpen: require("../../assets/logo.png"),
-      logoClose: require("../../assets/bird.png")
+      logoOpen: require("../assets/logo.png"),
+      logoClose: require("../assets/bird.png")
     };
   },
   components: {
